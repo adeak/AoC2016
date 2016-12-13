@@ -1,6 +1,4 @@
 import numpy as np
-from collections import defaultdict
-from operator import itemgetter
 from scipy import ndimage
 
 def is_valid(x,y,c):
