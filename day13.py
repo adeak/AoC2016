@@ -1,5 +1,7 @@
 import numpy as np
 from scipy import ndimage
+# for A* part 1 alternative:
+from collections import defaultdict
 
 def is_valid(x,y,c):
     if x>=0 and y>=0 and bin(int((x+y)**2+3*x+y+c)).count('1')%2==0:
@@ -43,4 +45,60 @@ def day13(c,finalpos=None,stepnum=None):
     # plot maze
     imax = max(map(max,np.where(paths))) + 2
     print('\n'.join(map(''.join,np.where(maze[:imax,:imax],np.where(paths[:imax,:imax],'o',' '),'\033[1m#\033[0m'))))
- 
+
+
+# see A* wikipedia
+def day13_part1_astar(c,finalpos):
+    posnow = (1,1)
+    pathlen = 0
+    visited = []
+    tovisit = []
+    visited.append(posnow)
+    tovisit.append(posnow)
+
+    prevpos = {}
+    gscore = defaultdict(lambda: 1e100)
+    fscore = defaultdict(lambda: 1e100)
+    gscore[posnow] = 0
+    fscore[posnow] = heuristic_cost(posnow,finalpos)
+
+    while len(tovisit)>0:
+        relevant_scores = [fscore[pos] for pos in tovisit]
+        minscore = min(relevant_scores)
+        for posnow in tovisit:
+            if fscore[posnow]==minscore:
+                break
+        if posnow==finalpos:
+            finalpath = reconstruct_path(prevpos,posnow)
+            print('found first path with stepnum {}: {}'.format(len(finalpath)-1,finalpath))
+            return finalpath
+        tovisit.remove(posnow)
+        visited.append(posnow)
+
+        xl,yl = posnow
+        for xn,yn in (xl+1,yl),(xl-1,yl),(xl,yl+1),(xl,yl-1):
+            if not is_valid(xn,yn,c) or (xn,yn) in visited:
+                continue
+            tentative_gscore = gscore[posnow] + 1 #dist_between(current, neighbor)
+            if (xn,yn) not in tovisit:
+                tovisit.append((xn,yn))
+            elif tentative_gscore >= gscore[(xn,yn)]:
+                # discard path
+                continue
+            # best path so far
+            prevpos[(xn,yn)] = posnow
+            gscore[(xn,yn)] = tentative_gscore
+            fscore[(xn,yn)] = gscore[posnow] + heuristic_cost((xn,yn),finalpos)
+    return 'A* failed :('
+
+def heuristic_cost(posnow,finalpos):
+    return abs(finalpos[0]-posnow[0]) + abs(finalpos[1]-posnow[1]) #~ straight line
+
+def reconstruct_path(prevpos,posnow):
+    allpath = [posnow]
+    while posnow in prevpos:
+        posnow = prevpos[posnow]
+        allpath.append(posnow)
+    return allpath
+
+
