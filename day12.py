@@ -1,4 +1,4 @@
-def day12(inps,cstart):
+def day12(inps,cstart=0):
     regs = {k:0 for k in list('abcd')}
     regs['c'] = cstart
     instrs = inps.strip().split('\n')
