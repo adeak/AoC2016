@@ -13,6 +13,4 @@ def day8(inputs):
             A,B = map(int,inp.split('=')[-1].split(' by '))
             disp[:,A] = np.roll(disp[:,A],B)
     print(disp.sum())
-    for k in range(10):
-        print(disp[:,5*k:5*(k+1)].astype(int))
-        print('')
+    print('\n'.join(map(''.join,np.where(disp,' * ','   '))))
