@@ -58,16 +58,14 @@ def reconstruct_path(prevpos,posnow):
         allpath.append(posnow)
     return allpath
 
+
 def day13b(c,stepnum):
     posnow = (1,1)
-    maze = np.empty((stepnum+1,stepnum+1),dtype=bool)
-    for k in range(stepnum+1):
-        for l in range(stepnum+1):
-            maze[k,l] = is_valid(k,l,c)
+    maze = np.vectorize(lambda x,y,c=c:is_valid(x,y,c),otypes=[bool])(*np.ogrid[:stepnum+1,:stepnum+1])
 
     paths = np.zeros((stepnum+1,stepnum+1),dtype=bool)
     paths[posnow] = True
     for k in range(stepnum):
-        paths = ndimage.binary_dilation(paths) & maze
-        print('number of sites after {} steps: {}'.format(k+1,paths.sum()))
-    print('done.')
+        paths = ndimage.binary_dilation(paths,mask=maze)
+        print('number of sites after {} steps: {}'.format(k,paths.sum()))
+    print('done with steplen {}.'.format(paths.sum()))
