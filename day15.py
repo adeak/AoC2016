@@ -15,13 +15,15 @@ def parse_inputs(inps,part2):
     discstart = np.array([discstart[k] for k in sorted(discstart)])
     return discnums,discstart
 
-def day15(inps,part2=False):
+def day15(inps,part2=False,blocksize=int(1e4)):
     discnums,discstart = parse_inputs(inps,part2)
-    time = 0
+    nblock = 0
     tdeltas = np.arange(1,discnums.size+1)
+    timeblock = np.arange(0,blocksize)[:,None]
     while True:
-        if all(np.mod(discstart+tdeltas+time,discnums)==0):
-            break
-        time += 1
-    print(time)
+        blockcheck = np.all(np.mod(discstart+tdeltas+timeblock+nblock*blocksize,discnums)==0,axis=1)
+        if any(blockcheck):
+            print(nblock*blocksize + np.where(blockcheck)[0][0])
+            return
+        nblock += 1
 
