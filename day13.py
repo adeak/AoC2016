@@ -3,15 +3,12 @@ from scipy import ndimage
 # for A* part 1 alternative:
 from collections import defaultdict
 
-def is_valid(x,y,c):
-    if x>=0 and y>=0 and bin(int((x+y)**2+3*x+y+c)).count('1')%2==0:
-        return True
-    return False
-
-def get_maze(c,mazelen):
-    return np.vectorize(lambda x,y,c=c:is_valid(x,y,c),otypes=[bool])(*np.ogrid[:mazelen,:mazelen])
-
 def day13(c,finalpos=None,stepnum=None):
+    '''
+    Inputs: c int primary input code
+            finalpos=(i,j) tuple for goal coordinates (optional for part 1)
+            stepnum int cut-off (optional for part 2)
+    '''
     posnow = (1,1)
     if stepnum is None:
         mazelen = max(finalpos)*2
@@ -46,9 +43,19 @@ def day13(c,finalpos=None,stepnum=None):
     imax = max(map(max,np.where(paths))) + 2
     print('\n'.join(map(''.join,np.where(maze[:imax,:imax],np.where(paths[:imax,:imax],'o',' '),'\033[1m#\033[0m'))))
 
+def is_valid(x,y,c):
+    if x>=0 and y>=0 and bin(int((x+y)**2+3*x+y+c)).count('1')%2==0:
+        return True
+    return False
 
+def get_maze(c,mazelen):
+    return np.vectorize(lambda x,y,c=c:is_valid(x,y,c),otypes=[bool])(*np.ogrid[:mazelen,:mazelen])
+
+
+# more efficient alternative for part 1: A* search
 # see A* wikipedia
-def day13_part1_astar(c,finalpos):
+def day13_part1_astar(c,finalpos=(31,39)):
+    '''Inputs: int c primary input, finalpos=(i,j) tuple for goal coordinates'''
     posnow = (1,1)
     pathlen = 0
     visited = []
@@ -102,3 +109,13 @@ def reconstruct_path(prevpos,posnow):
     return allpath
 
 
+if __name__=="__main__":
+    # your c may vary
+    c = 1364
+    finalpos = (31,39)
+    stepnum = 50
+    print('part1:')
+    #day13(c,finalpos=finalpos) # part 1 generic
+    day13_part1_astar(c)       # part 1, more efficient than generic
+    print('part2:')
+    day13(c,stepnum=stepnum)   # part 2
