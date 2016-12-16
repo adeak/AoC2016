@@ -2,6 +2,7 @@ import numpy as np
 from collections import deque
 
 def day16(inp,disklen):
+    '''inputs: binary input string, length of disk to fill'''
     inp = list(map(int,inp))
     inplen = len(inp)
     notpni = [1-i for i in inp[::-1]]
@@ -43,7 +44,7 @@ def hashcode(codedata):
     return newhash(codedata)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     inp = '11110010111001001' # may vary
     # part1:
     print('part1:')
