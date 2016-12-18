@@ -9,9 +9,9 @@ def day18(inp,nrows=40,printtiles=False):
     for _ in range(nrows-1):
         padded = np.concatenate(([True],issafe,[True]))
         # trap if 2+1 or 1+2 pattern in previous row
+        # safe if top left/right are the same
         # (stolen newer version from Antti)
-        newtrap = padded[0:-2] != padded[2:]
-        issafe = ~newtrap
+        issafe = padded[0:-2] == padded[2:]
         safes += issafe.sum()
         if printtiles:
             print(np.where(issafe,'.','^'))
