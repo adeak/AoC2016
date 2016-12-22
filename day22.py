@@ -1,6 +1,4 @@
 import numpy as np
-from collections import defaultdict
-from operator import itemgetter
 
 def day22(inps):
     inps = inps.strip()
