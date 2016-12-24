@@ -49,14 +49,14 @@ def discover_pairs(n,maze,coords,dmat):
         stepnow += 1
         prevpaths[...] = paths
         paths = ndimage.binary_dilation(paths,mask=maze)
-        if np.all(paths == prevpaths):
-            break
         newfound = paths[tuple(coords)] & ~prevpaths[tuple(coords)]
         newneighbs, = np.where(newfound)
         for nn in newneighbs:
             if dmat[n,nn] == -1:
                 dmat[n,nn] = dmat[nn,n] = stepnow
-    return dmat
+            if np.sum(dmat[n,:] == -1)==1:
+                # we're done
+                return dmat
 
 if __name__ == "__main__":
     inps = open('day24.inp','r').read().strip()
